@@ -1,0 +1,3 @@
+[submodule "swapSeats---common"]
+	path = swapSeats---common
+	url = https://github.com/samyak-sony/swapSeats---common.git
