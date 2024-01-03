@@ -12,9 +12,11 @@ declare global {
 // creating an instance of mongomeoryserver before all of ourt test set up
 // beforeAll() is a hook function. Whatever we pass inside 
 //here is going to run before all of our tests start to be executed
+jest.mock('../nats-wrapper');
 
 let mongo: any;
 beforeAll(async()=>{
+    jest.clearAllMocks();
      mongo = await MongoMemoryServer.create();
     const mongoUri = mongo.getUri();
 
