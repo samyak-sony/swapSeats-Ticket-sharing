@@ -4,8 +4,13 @@ import { BadRequestError, NotFoundError, OrderStatus, requireAuth,validateReques
 import { body } from 'express-validator';
 import { Ticket } from '../models/ticket';
 import { Order } from '../models/order';
+import { natsWrapper } from '../nats-wrapper';
+import { OrderCreatedPublisher } from '../events/publishers/order-created-publisher';
+
 
 const router = express.Router();
+
+const EXPIRATION_WINDOW_SECONDS = 15 * 60;
 
 router.post('/api/orders',requireAuth,
 [
@@ -32,8 +37,33 @@ router.post('/api/orders',requireAuth,
         throw new BadRequestError('Ticket already reserved');
     }
     
+    const expiration = new Date();
+    // expire 15minsutes into the future
+    expiration.setSeconds(expiration.getSeconds()+EXPIRATION_WINDOW_SECONDS);
+
+    const order = Order.build({
+        userId: req.currentUser!.id,
+        status: OrderStatus.Created,
+        expiresAt: expiration,
+        ticket: ticket,
+    });
     
-    res.send({});
+    await order.save();
+    
+    new OrderCreatedPublisher(natsWrapper.client).publish({
+        id:order.id,
+        version: order.id,
+        status:order.status,
+        userId: order.userId,
+        expiresAt: order.expiresAt.toISOString(),
+        ticket: {
+            id: ticket.id,
+            price: ticket.price,
+        }
+    });
+
+
+    res.status(201).send(order);
 
 });
 
