@@ -46,4 +46,12 @@ build:
           - src: src/**/*.ts
             dest: .
       docker:
-        dockerfile: Dockerfile                
+        dockerfile: Dockerfile
+    - image: samyakdocker/payments
+      context: payments
+      sync:
+        manual:
+          - src: src/**/*.ts
+            dest: .
+      docker:
+        dockerfile: Dockerfile                        
