@@ -10,7 +10,7 @@ import { OrderCreatedPublisher } from '../events/publishers/order-created-publis
 
 const router = express.Router();
 
-const EXPIRATION_WINDOW_SECONDS = 15 * 60;
+const EXPIRATION_WINDOW_SECONDS = 2 * 60;
 
 router.post('/api/orders',requireAuth,
 [
@@ -52,7 +52,7 @@ router.post('/api/orders',requireAuth,
     
     new OrderCreatedPublisher(natsWrapper.client).publish({
         id:order.id,
-        version: order.id,
+        version: order.version,
         status:order.status,
         userId: order.userId,
         expiresAt: order.expiresAt.toISOString(),
