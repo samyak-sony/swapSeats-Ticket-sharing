@@ -1,4 +1,4 @@
-# swapSeats- A Ticket-sharing Application
+# SwapSeats- A Ticket-sharing Application
 
 A ticket sharing application using microservice architecture. A user can sign-up to buy and sell tickets.
 The ticket is 'Locked' while buying for a certain duration of time and is 'unlocked' or released again if the payment fails to proceed.
